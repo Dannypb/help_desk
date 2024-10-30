@@ -1,0 +1,76 @@
+class Tickets(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    PRIORITY_CHOICES = [
+        ('Baja', 'Baja'),
+        ('Media', 'Media'),
+        ('Alta', 'Alta')
+    ]
+    priority = models.CharField(max_length=5, choices=PRIORITY_CHOICES, default='Media')
+    ESTATE_CHOICES = [
+        ('Abierto', 'Abierto'),
+        ('En progreso', 'En progreso'),
+        ('Cerrado', 'Cerrado')
+    ]
+    estate = models.CharField(max_length=20, choices=ESTATE_CHOICES, default='Abierto')
+    creation_date = models.DateTimeField(auto_now_add=True)
+    closing_date = models.DateTimeField(null=True, blank=True)
+    resolution = models.TextField(null=True, blank=True)
+    user_id = models.ForeignKey('usuarios.Usuario', on_delete=models.CASCADE, null=True, blank=True)
+    client_id = models.ForeignKey('cliente.Cliente', on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.title
+
+class Ticketfile(models.Model):
+    ticket = models.ForeignKey(Tickets, related_name='files', on_delete=models.CASCADE)
+    file = models.FileField(upload_to='ticket_files/')
+    upload_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f"File for Ticket {self.ticket.name}"
+
+
+----------------------------------------------------------------
+class UserManager(BaseUserManager):
+    def _create_user(self, email, name, password=None, **extra_fields):
+        if not email:
+            raise ValueError('El email debe ser proporcionado')
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, name, password=None, **extra_fields):
+        extra_fields.setdefault('is_active', True)
+        return self._create_user(email, name, password, **extra_fields)
+
+    def create_superuser(self, email, name, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self._create_user(email, name, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(max_length=200, unique=True)
+    password = models.CharField(max_length=250)
+    phone_number = models.CharField(max_length=9, null=True, blank=True, unique=True)
+    
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('user', 'User'),
+        ('client', 'Client')
+    ]
+    role = models.CharField(max_length=15, choices=ROLE_CHOICES, default='client')
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)  # Permite el acceso al admin
+    registered = models.DateTimeField(auto_now_add=True)
+    
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
+
+    def __str__(self):
+        return self.name
