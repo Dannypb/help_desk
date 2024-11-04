@@ -9,31 +9,16 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = 'DJANGO_SECRET_KEY'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'DJANGO_SECRET_KEY', 'django-insecure-_u*i+r_4ml4+c7kwpe3p!4uti_ly3v9k9++tnqmakevqhmd$yn'
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-ALLOWED_HOSTS = [
-    '*'
-]
-
-
-# Application definition
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,9 +28,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'coreapi',
+    'rest_framework_simplejwt',
+    'corsheaders',
     'api',
-    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -80,24 +65,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helpdeskadm.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'DB_Help_Desk',
-        'USER':'Boys',
-        'PASSWORD':'Stone049',
-        'HOST':'127.0.0.1',
-        'PORT':'5432',
+        'NAME': 'DB_Help_Desk',
+        'USER': 'Boys',
+        'PASSWORD': 'Stone049',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -114,29 +91,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+MEDIA_URL = '/media-files/'
+MEDIA_ROOT = BASE_DIR / 'files'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -146,43 +110,11 @@ AUTHENTICATION_BACKENDS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://192.168.18.120:5174",
-    "http://127.0.0.1:5174",
-    "http://localhost:5174",
-    "https://system-help-desk.vercel.app"
-]
-
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     'DATETIME_FORMAT': '%d-%m-%Y %H:%M:%S',
     'DATETIME_INPUT_FORMATS': ['%d-%m-%Y %H:%M:%S'],
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    #     'rest_framework.authentication.SessionAuthentication',
-    #     'rest_framework.authentication.TokenAuthentication',
-    # ],
-    # # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
-    # # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # 'DEFAULT_RENDERER_CLASSES': [
-    #     'rest_framework.renderers.JSONRenderer',
-    #     'rest_framework.renderers.BrowsableAPIRenderer',
-    # ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR / 'files'
-MEDIA_URL = '/media-files/'
-
-
-import django
-django.setup()
-
-if __name__ == "__main__":
-    from django.core.management import call_command
-    call_command("migrate")

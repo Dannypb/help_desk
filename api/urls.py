@@ -15,6 +15,6 @@ router.register(r'ticket', TicketViewSet)
 
 urlpatterns  = [
     path('', include(router.urls)),
-    path('login/', LoginViewSet.as_view(), name='Login'),
+    path('login/', LoginViewSet.as_view(), name='login'),
     
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

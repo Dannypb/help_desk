@@ -17,6 +17,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+
     def create_superuser(self, email, name, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -26,18 +27,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=200, unique=True)
     ROLE_CHOICES = [
-        ('admin', 'admin'),
-        ('agent', 'agent'),
-        ('client', 'client'),
+        ('admin', 'Admin'),
+        ('agent', 'Agent'),
+        ('client', 'Client'),
     ]
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default='client')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    
     registered = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         db_table = 'User'
-        
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -45,12 +46,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
-    
+
 class Occupation(models.Model):
-    occupation  = models.CharField(max_length=100, unique=True)
+    occupation = models.CharField(max_length=100, unique=True)
     registered_date = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         db_table = 'Occupation'
+
     def __str__(self):
         return self.occupation
 
@@ -60,20 +63,24 @@ class Client(models.Model):
     contact_phone = models.CharField(max_length=9, blank=True, null=True, unique=True)
     registered_date = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client')
+
     class Meta:
         db_table = 'Client'
+
     def __str__(self):
         return self.name_company
-    
+
 class Agent(models.Model):
     name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=9, unique=True)
     registered_date = models.DateTimeField(auto_now_add=True)
-    occupation  = models.OneToOneField(Occupation, on_delete=models.CASCADE, related_name='agent')
+    occupation = models.OneToOneField(Occupation, on_delete=models.CASCADE, related_name='agent')
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')
+
     class Meta:
         db_table = 'Agent'
+
     def __str__(self):
         return self.name
 
@@ -86,21 +93,22 @@ class Ticket(models.Model):
         ('media', 'Media'),
         ('alta', 'Alta')
     ]
-    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='Media')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='media')
     STATUS_CHOICES = [
-        ('cerrado', 'Cerrado'),
-        ('pendiete', 'Pendiente'),
-        ('en proceso', 'En proceso'),
-        ('abierto', 'Abierto'),
+        ('notificacion', 'Notificacion'),
+        ('pendiente', 'Pendiente'),
+        ('en_proceso', 'En Proceso'),
+        ('cerrado', 'Cerrado')
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pendiente')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='notificacion')
     registered_date = models.DateTimeField(auto_now_add=True)
-    delivery_date = models.DateTimeField()
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='ticket')
+    delivery_date = models.DateTimeField(blank=True, null=True)
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='ticket', blank=True, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='ticket')
+
     class Meta:
         db_table = 'Ticket'
-        
+
     def __str__(self):
         return self.title
-  
+
