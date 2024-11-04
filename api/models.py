@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from phonenumber_field.modelfields import PhoneNumberField
 from django.conf import settings
 
 from helpdeskadm.settings import  MEDIA_URL, STATIC_URL
@@ -60,7 +61,7 @@ class Occupation(models.Model):
 class Client(models.Model):
     name_company = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
-    contact_phone = models.CharField(max_length=9, blank=True, null=True, unique=True)
+    contact_phone = PhoneNumberField(unique=True, region='PE', null=False, default='000-000-000')
     registered_date = models.DateTimeField(auto_now_add=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client')
 
@@ -73,7 +74,7 @@ class Client(models.Model):
 class Agent(models.Model):
     name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=9, unique=True)
+    phone = PhoneNumberField(unique=True, region='PE', null=False, default='000-000-000')
     registered_date = models.DateTimeField(auto_now_add=True)
     occupation = models.OneToOneField(Occupation, on_delete=models.CASCADE, related_name='agent')
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='agent')

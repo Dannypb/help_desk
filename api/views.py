@@ -68,3 +68,4 @@ class TicketViewSet(viewsets.ModelViewSet):
         if self.request.user.is_staff:
             return Ticket.objects.all()
         return Ticket.objects.filter(client__user=self.request.user)
+    
