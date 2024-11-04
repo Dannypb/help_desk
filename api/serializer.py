@@ -82,3 +82,4 @@ class TicketSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['status'] = 'pendiente'
         return super().create(validated_data)
+    

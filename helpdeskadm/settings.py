@@ -21,17 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-_u*i+r_4ml4+c7kwpe3p!4uti_ly3v9k9++tnqmakevqhmd$yn')
+SECRET_KEY = 'DJANGO_SECRET_KEY', 'django-insecure-_u*i+r_4ml4+c7kwpe3p!4uti_ly3v9k9++tnqmakevqhmd$yn'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = True
 
 
 ALLOWED_HOSTS = [
-    '*',
-    'vercel.app',
-    'localhost'
+    '*'
 ]
 
 
@@ -89,11 +87,11 @@ WSGI_APPLICATION = 'helpdeskadm.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'DB_Help_Desk'),
-        'USER': os.getenv('DB_USER', 'Boys'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'Stone049'),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME':'DB_Help_Desk',
+        'USER':'Boys',
+        'PASSWORD':'Stone049',
+        'HOST':'127.0.0.1',
+        'PORT':'5432',
     }
 }
 
